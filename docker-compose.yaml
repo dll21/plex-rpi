@@ -3,13 +3,12 @@ version: "3.7"
 services:
 
   samba:
+    env_file: .env
     image: dperson/samba # no hay tag con versiones, solo latest
     restart: always
-    command: '-u "pi;password" -s "media;/media;yes;no" -s "downloads;/downloads;yes;no"'
+    command: '-u "david;password" -s "media;/media;yes;no" -s "downloads;/downloads;yes;no"'
     stdin_open: true
     tty: true
-    environment:
-      - TZ=America/Argentina/Mendoza
     ports:
       - 139:139
       - 445:445
@@ -18,6 +17,7 @@ services:
       - ${STORAGE}/torrents:/downloads
 
   plex:
+    env_file: .env
     image: jaymoulin/plex:1.30.1.6562
     expose:
       - 32400
@@ -26,8 +26,6 @@ services:
     # ports:
     #  - 32400:32400
     #  - 33400:33400
-    environment:
-      - TZ=America/Argentina/Mendoza
     volumes:
       - ${STORAGE}/Plex Media Server:/root/Library/Application Support/Plex Media Server
       - ${MEDIA}:/media
@@ -50,6 +48,7 @@ services:
     restart: unless-stopped
 
   flexget:
+    env_file: .env
     image: wiserain/flexget:3.5
     volumes:
       - ./flexget:/config
@@ -58,9 +57,4 @@ services:
       - ${MEDIA}:/storage
     ports:
       - 5050:5050
-    environment:
-      - PUID=1001
-      - PGID=1001
-      - TORRENT_PLUGIN=transmission
-      - FG_WEBUI_PASSWD=p3l4d0_N3RD # la puedes cambiar por la que quieras
     restart: unless-stopped
